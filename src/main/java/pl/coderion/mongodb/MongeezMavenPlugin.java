@@ -1,6 +1,7 @@
 package pl.coderion.mongodb;
 
 import com.mongodb.Mongo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -41,9 +42,14 @@ public class MongeezMavenPlugin extends AbstractMojo {
             mongeez.setFile(new FileSystemResource(changeLogFile));
             mongeez.setMongo(new Mongo(properties.getProperty(MONGODB_HOST_PROPERTY),
                     Integer.valueOf(properties.getProperty(MONGODB_PORT_PROPERTY))));
-            mongeez.setAuth(new MongoAuth(properties.getProperty(MONGODB_USER_NAME),
-                    properties.getProperty(MONGODB_USER_PASSWD),
-                    properties.getProperty(MONGODB_DATABASE_NAME_PROPERTY)));
+
+            if (!StringUtils.isBlank(properties.getProperty(MONGODB_USER_NAME)) &&
+                    !StringUtils.isBlank(properties.getProperty(MONGODB_USER_PASSWD))) {
+                mongeez.setAuth(new MongoAuth(properties.getProperty(MONGODB_USER_NAME),
+                        properties.getProperty(MONGODB_USER_PASSWD),
+                        properties.getProperty(MONGODB_DATABASE_NAME_PROPERTY)));
+            }
+
             mongeez.setDbName(properties.getProperty(MONGODB_DATABASE_NAME_PROPERTY));
             mongeez.process();
 
